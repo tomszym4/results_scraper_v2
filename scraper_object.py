@@ -20,9 +20,10 @@ class PairOfTeams:
         self.team_2_id = 0
         self.country = ""
         self.league = ""
-        self.effectivity = ""
-        self.ht_effectivity = ""
-        self.ft_effectivity = ""
+        self.effectivity = 0
+        self.ht_effectivity = 0
+        self.ft_effectivity = 0
+        self.total_matches = 0
         self.last_updated = datetime.datetime.now()
         #  ---------------------------------
         self.postponed = 0
@@ -47,6 +48,9 @@ class Results:
         self.postponed = 0
         self.url = ""
         self.url_active = 1
+        self.is_ht_late = 0
+        self.is_ft_late = 0
+        self.is_late = 0
 
 
 """def print_all_info(scraper_object):

@@ -1,20 +1,21 @@
+from selenium.common.exceptions import NoSuchElementException
+
 
 def check_if_postponed(wd):
     """Checks if match was not canceled or postponed"""
     try:
         result = wd.find_element_by_id("js-eventstage").text
-        if result == "Postponed":
-            print("Postponed")
+        if result == "Postponed" or result == "Cancelled" or result == "Abandoned" or result == "After Extra Time":
             return 1
-        elif result == "Canceled":
-            print("Canceled")
-            return 1
+        elif result == "After Penalties":
+            score = wd.find_element_by_id("js-score").text
+            return score
         elif result == "Penalties":
-            #  TODO: Look if return 1 of other number and not delete upcoming_match
+            return result
+    except NoSuchElementException:
+        result = wd.find_element_by_id("js-score").text
+        if result == "-:-":
             return 1
-        else:
-            return 0
-    except:
         return 0
 
 
@@ -28,35 +29,20 @@ def get_result(wd):
         return "N/A Result"
 
 
-def get_result_ht(wd):
-    """Finds and returns result of a first half if WebDriver element provided
-    Returns result in string format"""
+def get_result_ht_ft(wd, after_penalties=False):
+    """Finds and returns result for first and second half if WebDriver element is provided
+    Returns list of strings"""
     try:
-        result = wd.find_element_by_id("js-partial").text
-        ht = clean_goals(result)
-        ht = ht.split(",")
-        return ht[0]
+        if after_penalties:
+            return clean_goals(wd.find_element_by_id("js-partial").text).split(",")[:2]
+        return clean_goals(wd.find_element_by_id("js-partial").text).split(",")
     except:
-        return "N/A HT Result"
-
-
-def get_result_ft(wd):
-    """Finds and returns result of a second half if WebDriver element provided
-    Returns result in string format"""
-    try:
-        result = wd.find_element_by_id("js-partial").text
-        ft = clean_goals(result)
-        ft = ft.split(",")
-        return ft[1]
-    except:
-        return "N/A FT Result"
+        return ["N/A HT Result", "N/A FT Result"]
 
 
 def get_minutes_of_goals(wd):
-    """Returns minutes of scored goals,
-    and check_if_late_goal() should be
-    called after this function with goals[]
-    as a parameter"""
+    """Returns minutes of scored goals, and check_if_late_goal() should be
+    called after this function with goals[] as a parameter"""
     goals = []
     try:
         temp_goals = wd.find_elements_by_tag_name("td")
@@ -86,7 +72,6 @@ def clean_minutes_of_goals(temp_string):
 
 
 def clean_goals(result):
-    list_goals = []
     goals = ""
     for c in result:
         if c.isnumeric():
