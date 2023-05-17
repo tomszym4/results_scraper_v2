@@ -12,12 +12,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
-DRIVER_PATH = r"C:\Users\Criminalman\PycharmProjects\webscraper\chromedriver.exe"
+driver_path = r"/Users/tszymanski/PycharmProjects/web_scraper_v3/chromedriver"
 
 options = Options()
 options.headless = True
 options.add_argument("--window-size=1920,1080")
-driver = webdriver.Chrome(options=options, executable_path=DRIVER_PATH)
+driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
 
 """Checking if config.ini exist"""
